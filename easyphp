@@ -1,0 +1,17 @@
+<?php
+    //题目环境：php:7.4.8-apache
+    $pid = pcntl_fork();
+    if ($pid == -1) {
+        die('could not fork');
+    }else if ($pid){
+        $r=pcntl_wait($status);
+        if(!pcntl_wifexited($status)){
+            phpinfo();
+        }
+    }else{
+        highlight_file(__FILE__);
+        if(isset($_GET['a'])&&is_string($_GET['a'])&&!preg_match("/[:\\\\]|exec|pcntl/i",$_GET['a'])){
+            call_user_func_array($_GET['a'],[$_GET['b'],false,true]);
+        }
+        posix_kill(posix_getpid(), SIGUSR1);
+    }
